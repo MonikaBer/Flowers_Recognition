@@ -32,13 +32,17 @@ def initialize_model(num_classes, use_pretrained=True):
 
 
 def setup_2a(model):
-    for param in model.layer4[2].conv3.parameters():
+    for param in model.layer4[2].conv3.parameters():    #the last conv
         param.requires_grad = True
     return model
 
 
 def setup_2b(model):
-    pass
+    for param in model.layer4[2].conv3.parameters():     #the last conv
+        param.requires_grad = True
+    for param in model.layer4[2].conv2.parameters():     #next to last conv
+        param.requires_grad = True
+    return model
 
 
 def train_model(model, device, dataloaders, criterion, optimizer, num_epochs=25, is_inception=False):
