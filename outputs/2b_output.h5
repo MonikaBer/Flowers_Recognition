@@ -1,0 +1,104 @@
+Epoch 0/19
+----------
+train Loss: 0.7579 Acc: 0.7206
+val Loss: 0.3635 Acc: 0.8667
+
+Epoch 1/19
+----------
+train Loss: 0.5287 Acc: 0.8014
+val Loss: 0.3823 Acc: 0.8667
+
+Epoch 2/19
+----------
+train Loss: 0.5226 Acc: 0.8062
+val Loss: 0.4817 Acc: 0.8600
+
+Epoch 3/19
+----------
+train Loss: 0.4691 Acc: 0.8336
+val Loss: 0.2861 Acc: 0.9067
+
+Epoch 4/19
+----------
+train Loss: 0.4619 Acc: 0.8333
+val Loss: 0.3137 Acc: 0.8867
+
+Epoch 5/19
+----------
+train Loss: 0.4515 Acc: 0.8388
+val Loss: 0.3069 Acc: 0.9000
+
+Epoch 6/19
+----------
+train Loss: 0.3870 Acc: 0.8645
+val Loss: 0.4117 Acc: 0.9000
+
+Epoch 7/19
+----------
+train Loss: 0.4015 Acc: 0.8566
+val Loss: 0.3093 Acc: 0.8867
+
+Epoch 8/19
+----------
+train Loss: 0.3954 Acc: 0.8595
+val Loss: 0.4666 Acc: 0.8867
+
+Epoch 9/19
+----------
+train Loss: 0.3944 Acc: 0.8561
+val Loss: 0.3162 Acc: 0.8867
+
+Epoch 10/19
+----------
+train Loss: 0.3755 Acc: 0.8679
+val Loss: 0.2839 Acc: 0.9000
+
+Epoch 11/19
+----------
+train Loss: 0.3719 Acc: 0.8657
+val Loss: 0.3575 Acc: 0.9067
+
+Epoch 12/19
+----------
+train Loss: 0.3432 Acc: 0.8743
+val Loss: 0.3533 Acc: 0.8800
+
+Epoch 13/19
+----------
+train Loss: 0.3347 Acc: 0.8799
+val Loss: 0.3766 Acc: 0.8800
+
+Epoch 14/19
+----------
+train Loss: 0.3402 Acc: 0.8743
+val Loss: 0.3481 Acc: 0.8800
+
+Epoch 15/19
+----------
+train Loss: 0.3287 Acc: 0.8801
+val Loss: 0.3739 Acc: 0.8667
+
+Epoch 16/19
+----------
+train Loss: 0.3277 Acc: 0.8803
+val Loss: 0.4333 Acc: 0.8733
+
+Epoch 17/19
+----------
+train Loss: 0.3167 Acc: 0.8813
+val Loss: 0.3280 Acc: 0.8867
+
+Epoch 18/19
+----------
+train Loss: 0.3064 Acc: 0.8909
+val Loss: 0.3215 Acc: 0.8867
+
+Epoch 19/19
+----------
+train Loss: 0.2930 Acc: 0.8966
+val Loss: 0.3775 Acc: 0.8933
+
+Training complete in 15m 53s
+Best val Acc: 0.906667
+[tensor(0.8667, device='cuda:0', dtype=torch.float64), tensor(0.8667, device='cuda:0', dtype=torch.float64), tensor(0.8600, device='cuda:0', dtype=torch.float64), tensor(0.9067, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.9000, device='cuda:0', dtype=torch.float64), tensor(0.9000, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.9000, device='cuda:0', dtype=torch.float64), tensor(0.9067, device='cuda:0', dtype=torch.float64), tensor(0.8800, device='cuda:0', dtype=torch.float64), tensor(0.8800, device='cuda:0', dtype=torch.float64), tensor(0.8800, device='cuda:0', dtype=torch.float64), tensor(0.8667, device='cuda:0', dtype=torch.float64), tensor(0.8733, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.8867, device='cuda:0', dtype=torch.float64), tensor(0.8933, device='cuda:0', dtype=torch.float64)]
+
