@@ -1,4 +1,3 @@
-
 # https://pytorch.org/tutorials/beginner/finetuning_torchvision_models_tutorial.html
 import copy
 import os
@@ -9,10 +8,11 @@ from torch import nn, optim
 from torchvision import datasets
 from torchvision.transforms import transforms
 
+#data_dir = "/content/drive/My Drive/flowers"
 data_dir = os.getenv("FLOWERS_DIR", default="/home/patrycja/flowers")
 num_classes = 5
 batch_size = 8
-num_epochs = 15
+num_epochs = 20
 feature_extract = False
 
 
@@ -128,8 +128,8 @@ def train_model(model, device, dataloaders, criterion, optimizer, num_epochs=25,
 
 def main():
     model_ft, input_size = initialize_model(num_classes, use_pretrained=True)
-    print(model_ft)
-    model_ft = setup_2a(model_ft)
+    # print(model_ft)
+    model_ft = setup_2b(model_ft)
 
     # Data augmentation and normalization for training
     # Just normalization for validation
@@ -161,32 +161,16 @@ def main():
     # Send the model to GPU
     model_ft = model_ft.to(device)
 
-    # Gather the parameters to be optimized/updated in this run. If we are
-    #  finetuning we will be updating all parameters. However, if we are
-    #  doing feature extract method, we will only update the parameters
-    #  that we have just initialized, i.e. the parameters with requires_grad
-    #  is True.
-    params_to_update = model_ft.parameters()
-    print("Params to learn:")
-    if feature_extract:
-        params_to_update = []
-        for name, param in model_ft.named_parameters():
-            if param.requires_grad:
-                params_to_update.append(param)
-                print("\t", name)
-    else:
-        for name, param in model_ft.named_parameters():
-            if param.requires_grad:
-                print("\t", name)
-
     # Observe that all parameters are being optimized
-    optimizer_ft = optim.SGD(params_to_update, lr=0.001, momentum=0.9)
+    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 
     # Setup the loss fxn
     criterion = nn.CrossEntropyLoss()
 
     # Train and evaluate
     model_ft, hist = train_model(model_ft, device, dataloaders_dict, criterion, optimizer_ft, num_epochs=num_epochs, is_inception=False)
+    print(hist)
+    torch.save(model_ft.state_dict(), "/content/drive/My Drive/monika/2b_weights.h5")
 
 
 if __name__ == "__main__":
