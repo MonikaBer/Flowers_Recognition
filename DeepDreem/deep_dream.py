@@ -4,12 +4,9 @@ from torch.autograd import Variable
 from torchvision import models, transforms
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
-import argparse
-import os
+import cv2
 import tqdm
 import scipy.ndimage as nd
-
 
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
@@ -70,27 +67,27 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_image", type=str, default="images/daisy.jpg", help="path to input image")
-    parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
-    parser.add_argument("--at_layer", default=16, type=int, help="layer at which we modify image to maximize outputs")
-    parser.add_argument("--lr", default=0.02, help="learning rate")
-    parser.add_argument("--octave_scale", default=1.4, help="image scale between octaves")
-    parser.add_argument("--num_octaves", default=10, help="number of octaves")
-    args = parser.parse_args()
+    image_path = "images/rose2.jpg"
+    iterations = 30
+    at_layer = 16
+    lr = 0.02
+    octave_scale = 1.4
+    num_octaves = 6
 
     # Load image
-    image = Image.open(args.input_image)
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # Define the model
     network = models.resnet50(pretrained=True)
+    # network = torch.load('2c_trained_model.pt')
     layers = list(network.children())[0:4] + \
             list(network.layer1) + \
             list(network.layer2) + \
             list(network.layer3) + \
             list(network.layer4) + \
             list(network.children())[8:10]
-    model = nn.Sequential(*layers[: (args.at_layer + 1)])
+    model = nn.Sequential(*layers[: (at_layer + 1)])
     model.eval()
     if torch.cuda.is_available:
         model = model.cuda()
@@ -99,17 +96,13 @@ if __name__ == "__main__":
     dreamed_image = deep_dream(
         image,
         model,
-        iterations=args.iterations,
-        lr=args.lr,
-        octave_scale=args.octave_scale,
-        num_octaves=args.num_octaves
+        iterations,
+        lr,
+        octave_scale,
+        num_octaves
     )
 
     dreamed_image = np.true_divide(dreamed_image, np.amax(dreamed_image))
-    # Save and plot image
-    os.makedirs("outputs", exist_ok=True)
-    filename = args.input_image.split("/")[-1]
     plt.figure(figsize=(20, 20))
     plt.imshow(dreamed_image)
-    plt.imsave(f"outputs/output{str(args.at_layer)}_{filename}", dreamed_image)
     plt.show()
