@@ -1,20 +1,40 @@
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.autograd import Variable
 from torchvision import models, transforms
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-import argparse
-import os
 import tqdm
 import scipy.ndimage as nd
 
+# parameters
+INPUT_IMAGE = "/content/drive/My Drive/flowers/rest/5673728_71b8cb57eb.jpg"
+PATH_TO_MODEL = "/content/drive/My Drive/monika/2b_weights.h5"
+OUTPUT_IMAGE = "/content/drive/My Drive/monika/2b_dreamed_5673728_71b8cb57eb.jpg"
+ITERATIONS = 20
+AT_LAYER = 16
+LR = 0.02
+OCTAVE_SCALE = 1.4
+NUM_OCTAVES = 10
+
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
-
+num_classes = 5
 preprocess = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
 
+def initialize_model(num_classes, use_pretrained=True):
+    model_ft = None
+    input_size = 0
+    model_ft = models.resnet50(pretrained=use_pretrained)
+    # set_parameter_requires_grad(model_ft, feature_extract)
+    num_ftrs = model_ft.fc.in_features
+    for param in model_ft.parameters():
+        param.requires_grad = False
+    model_ft.fc = nn.Linear(num_ftrs, num_classes)
+    input_size = 224
+
+    return model_ft, input_size
 
 def deprocess(image_np):
     image_np = image_np.squeeze().transpose(1, 2, 0)
@@ -73,82 +93,26 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 if __name__ == "__main__":
     model_ft, input_size = initialize_model(num_classes, use_pretrained=True)
-    model_ft.load_state_dict(torch.load("/content/drive/My Drive/monika/2b_weights.h5"))
+    model_ft.load_state_dict(torch.load(PATH_TO_MODEL))
 
-    # layers = list(model_ft.children())[0:4] + list(model_ft.layer1) + list(model_ft.layer2) + list(model_ft.layer3) + list(model_ft.layer4) + list(model_ft.children())[8:10]
-    # model_ft = nn.Sequential(*layers[: (at_layer + 1)])
+    layers = list(model_ft.children())[0:4] + list(model_ft.layer1) + list(model_ft.layer2) + list(model_ft.layer3) + list(model_ft.layer4) + list(model_ft.children())[8:10]
+    model_ft = nn.Sequential(*layers[: (AT_LAYER + 1)])
 
     model_ft.cuda()
-
     model_ft.eval()
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--input_image", type=str, default="/content/drive/My Drive/flowers/rest/5673728_71b8cb57eb.jpg", help="path to input image")
-    # parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
-    # parser.add_argument("--at_layer", default=16, type=int, help="layer at which we modify image to maximize outputs")
-    # parser.add_argument("--lr", default=0.02, help="learning rate")
-    # parser.add_argument("--octave_scale", default=1.4, help="image scale between octaves")
-    # parser.add_argument("--num_octaves", default=10, help="number of octaves")
-    # args = parser.parse_args()
-
-    # parameters
-    input_image = "/content/drive/My Drive/flowers/rest/5673728_71b8cb57eb.jpg"
-    image = Image.open(input_image)
-    iterations = 20
-    at_layer = 16
-    lr = 0.02
-    octave_scale = 1.4
-    num_octaves = 10
-
-    # Define the model
-    # model_ft = models.resnet50(pretrained=True)
-    # layers = list(model_ft.children())[0:4] +
-    #         list(model_ft.layer1) +
-    #         list(model_ft.layer2) +
-    #         list(model_ft.layer3) +
-    #         list(model_ft.layer4) +
-    #         list(model_ft.children())[8:10]
-    # model = nn.Sequential(*layers[: (args.at_layer + 1)])
-    # model.eval()
-    # if torch.cuda.is_available:
-    #     model = model.cuda()
-
+    image = Image.open(INPUT_IMAGE)
     # Extract deep dream image
     dreamed_image = deep_dream(
         image,
         model_ft,
-        iterations,
-        lr,
-        octave_scale,
-        num_octaves
+        ITERATIONS,
+        LR,
+        OCTAVE_SCALE,
+        NUM_OCTAVES
     )
-    # network = models.resnet50(pretrained=True)
-    # layers = list(network.children())[0:4] +
-    #         list(network.layer1) +
-    #         list(network.layer2) +
-    #         list(network.layer3) +
-    #         list(network.layer4) +
-    #         list(network.children())[8:10]
-    # model = nn.Sequential(*layers[: (args.at_layer + 1)])
-    # model.eval()
-    # if torch.cuda.is_available:
-    #     model = model.cuda()
-
-    # # Extract deep dream image
-    # dreamed_image = deep_dream(
-    #     image,
-    #     model,
-    #     iterations=args.iterations,
-    #     lr=args.lr,
-    #     octave_scale=args.octave_scale,
-    #     num_octaves=args.num_octaves
-    # )
 
     dreamed_image = np.true_divide(dreamed_image, np.amax(dreamed_image))
-    # Save and plot image
-    # os.makedirs("outputs", exist_ok=True)
-    # filename = args.input_image.split("/")[-1]
     plt.figure(figsize=(20, 20))
     plt.imshow(dreamed_image)
-    plt.imsave("/content/drive/My Drive/monika/2b_dreamed_5673728_71b8cb57eb.jpg", dreamed_image)
-    # plt.show()ls
+    plt.imsave(OUTPUT_IMAGE, dreamed_image)

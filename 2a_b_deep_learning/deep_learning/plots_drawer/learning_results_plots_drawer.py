@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-import os
 
+# DATA_DIR = "/content/drive/My Drive/monika/2a_output.h5"
+DATA_DIR = "../outputs/2a_output.h5"                               # path to file with results of deep learning
 
 class Epoch:
     def __init__(self, epoch_nr, train_loss, train_acc, val_loss, val_acc):
@@ -68,13 +69,13 @@ class PlotDrawer:
         plt.plot(x_epoch, y_val_acc)
         plt.legend(["train loss", "train accuracy", "val loss", "val accuracy"])
         #plt.savefig("/content/drive/My Drive/monika/" + self.title, dpi=72)
-        plt.savefig("plots/"+self.title, dpi=72)
+        plt.savefig("../plots/"+self.title, dpi=72)    # path for saving plot
 
 
 def main():
     plot_drawer = PlotDrawer()
-    #plot_drawer.parse("/content/drive/My Drive/monika/2a_output.h5")
-    plot_drawer.parse("outputs/2a_output.h5")
+    #plot_drawer.parse(DATA_DIR)
+    plot_drawer.parse(DATA_DIR)
     plot_drawer.draw_plot()
 
 

@@ -8,8 +8,10 @@ from torch import nn, optim
 from torchvision import datasets
 from torchvision.transforms import transforms
 
-#data_dir = "/content/drive/My Drive/flowers"
-data_dir = os.getenv("FLOWERS_DIR", default="/home/patrycja/flowers")
+DATA_DIR = "/content/drive/My Drive/flowers"                    # path to directory with flowers
+SAVING_PATH = "/content/drive/My Drive/monika/2a_weights.h5"    # path for saving the model
+
+#data_dir = os.getenv("FLOWERS_DIR")
 num_classes = 5
 batch_size = 8
 num_epochs = 20
@@ -19,15 +21,12 @@ feature_extract = False
 def initialize_model(num_classes, use_pretrained=True):
     model_ft = None
     input_size = 0
-
     model_ft = models.resnet50(pretrained=use_pretrained)
-    #set_parameter_requires_grad(model_ft, feature_extract)
     num_ftrs = model_ft.fc.in_features
     for param in model_ft.parameters():
         param.requires_grad = False
     model_ft.fc = nn.Linear(num_ftrs, num_classes)
     input_size = 224
-
     return model_ft, input_size
 
 
@@ -38,7 +37,7 @@ def setup_2a(model):
 
 
 def setup_2b(model):
-    for param in model.layer4[2].conv3.parameters():     #the last conv
+    for param in model.layer4[2].conv3.parameters():     #last conv
         param.requires_grad = True
     for param in model.layer4[2].conv2.parameters():     #next to last conv
         param.requires_grad = True
@@ -47,23 +46,18 @@ def setup_2b(model):
 
 def train_model(model, device, dataloaders, criterion, optimizer, num_epochs=25, is_inception=False):
     since = time.time()
-
     val_acc_history = []
-
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
-
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
-
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
                 model.eval()   # Set model to evaluate mode
-
             running_loss = 0.0
             running_corrects = 0
 
@@ -129,7 +123,8 @@ def train_model(model, device, dataloaders, criterion, optimizer, num_epochs=25,
 def main():
     model_ft, input_size = initialize_model(num_classes, use_pretrained=True)
     # print(model_ft)
-    model_ft = setup_2b(model_ft)
+    model_ft = setup_2a(model_ft)
+    # model_ft = setup_2b(model_ft)
 
     # Data augmentation and normalization for training
     # Just normalization for validation
@@ -151,7 +146,7 @@ def main():
     print("Initializing Datasets and Dataloaders...")
 
     # Create training and validation datasets
-    image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train', 'val']}
+    image_datasets = {x: datasets.ImageFolder(os.path.join(DATA_DIR, x), data_transforms[x]) for x in ['train', 'val']}
     # Create training and validation dataloaders
     dataloaders_dict = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=4) for x in ['train', 'val']}
 
@@ -170,7 +165,7 @@ def main():
     # Train and evaluate
     model_ft, hist = train_model(model_ft, device, dataloaders_dict, criterion, optimizer_ft, num_epochs=num_epochs, is_inception=False)
     print(hist)
-    torch.save(model_ft.state_dict(), "/content/drive/My Drive/monika/2b_weights.h5")
+    torch.save(model_ft.state_dict(), SAVING_PATH)
 
 
 if __name__ == "__main__":
