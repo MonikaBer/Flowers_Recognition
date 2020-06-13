@@ -1,6 +1,8 @@
 # Deep learning
 - This module includes source code for 2a. and 2b. exercise: 
+
 2a) last convolutional layer learning
+
 2b) next two last and last convolutional layers learning
 
 - Directory named 'outputs' contains results of deep learning.
